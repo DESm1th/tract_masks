@@ -27,4 +27,4 @@ A set of scripts and functions for producing masks from a JSON file of tract end
 	image into MNI space
 
 ### utils.py:
-	A mess of useful functions. Some 
+	A mess of useful functions.
