@@ -50,14 +50,23 @@ def prep_masks(nifti_dir, output_dir, smoothing):
         run(command)
 
 def project_to_surfaces(mni_fmri, output_dir, hcp_data):
-    output_name = remove_extension(mni_fmri) + '.dscalar.nii'
+    file_name = remove_extension(mni_fmri)
+    output_name = file_name + '.dscalar.nii'
     output_dscalar = os.path.join(output_dir, output_name)
     command = ['ciftify_a_nifti', '--hcp-subjects-dir {}'.format(hcp_data),
             mni_fmri, output_dscalar]
+
     return_val, output, error = run(command)
     if return_val:
         print("output: {} error: {}".format(output, error))
         sys.exit(1)
+
+    set_cifti_map_name(output_dscalar, file_name)
+
+def set_cifti_map_name(cifti, name, index=1):
+    command = "wb_command -set-map-names {} -map {} {}".format(cifti, index,
+            name)
+    run(command)
 
 def remove_extension(file_name):
     return file_name.replace('.nii', '').replace('.gz', '')
