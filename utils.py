@@ -50,7 +50,7 @@ def prep_masks(nifti_dir, output_dir, smoothing):
         run(command)
 
 def project_to_surfaces(mni_fmri, output_dir, hcp_data):
-    file_name = remove_extension(mni_fmri)
+    file_name = remove_extension(os.path.basename(mni_fmri))
     output_name = file_name + '.dscalar.nii'
     output_dscalar = os.path.join(output_dir, output_name)
     command = ['ciftify_a_nifti', '--hcp-subjects-dir {}'.format(hcp_data),
