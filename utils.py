@@ -6,6 +6,7 @@ import os
 import sys
 import glob
 import shutil
+import tempfile
 import subprocess
 
 def run(cmd):
