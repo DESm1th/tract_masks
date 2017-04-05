@@ -82,7 +82,7 @@ def get_output_name(output_loc, user_arg, masked_image):
         final_name = user_arg
     else:
         base_name = os.path.basename(masked_image)
-        final_name = base_name + '_masks.dscalar.nii'
+        final_name = utils.remove_extension(base_name) + '_masks.dscalar.nii'
 
     return os.path.join(output_loc, final_name)
 
