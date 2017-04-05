@@ -28,17 +28,23 @@ Options:
                                 input file will be assumed to follow the datman
                                 naming convention and be named as
                                 <masked image>_masks.dscalar.nii
+    -v, --verbose               Additional log statements
 
 """
 
 import os
 import glob
+import logging
 
 from docopt import docopt
 
 import tract_end_masks as nii_masks
 import mni_transform
 import utils
+
+logging.basicConfig(level=logging.WARN,
+        format="[%(name)s] %(levelname)s: %(message)s")
+logger = logging.getLogger(os.path.basename(__file__))
 
 def main(temp_results):
     arguments = docopt(__doc__)
@@ -51,30 +57,35 @@ def main(temp_results):
     smoothing = arguments['--smoothing']
     cost = arguments['--cost_function']
     dof = arguments['--dof']
+    verbose = arguments['--verbose']
+
+    if verbose:
+        logger.setLevel(logging.INFO)
 
     final_output = get_output_name(output_loc, arguments['--output_name'],
             masked_image)
     results_dir = get_results_dir(temp_results, output_loc, save_results)
 
-    print("Generating tract end point masks.")
+    logger.info("Generating tract end point masks.")
     nifti_mask_folder = make_output_folder(results_dir, 'nii_masks')
     nii_masks.generate_masks(masked_image, tracts_file, nifti_mask_folder)
 
-    print("Smoothing tract end point masks with Sigma {}.".format(smoothing))
+    logger.info("Smoothing tract end point masks with Sigma "
+            "{}.".format(smoothing))
     smoothed_mask_folder = make_output_folder(results_dir,
             'nii_sm{}'.format(smoothing))
     utils.prep_masks(nifti_mask_folder, smoothed_mask_folder, smoothing)
 
-    print("Moving smoothed masks to MNI space.")
+    logger.info("Moving smoothed masks to MNI space.")
     mni_folder = make_output_folder(results_dir, 'nii_MNI')
     transform_to_MNI(smoothed_mask_folder, mni_folder, b0_map, hcp_data,
             cost, dof)
 
-    print("Converting MNI space masks to cifti format.")
+    logger.info("Converting MNI space masks to cifti format.")
     cifti_folder = make_output_folder(results_dir, 'cifti_masks')
     project_to_surfaces(mni_folder, cifti_folder, hcp_data)
 
-    print("Merging individual cifti masks to one.")
+    logger.info("Merging individual cifti masks to one.")
     utils.merge_ciftis(cifti_folder, final_output)
 
 def get_output_name(output_loc, user_arg, masked_image):
