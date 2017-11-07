@@ -18,7 +18,7 @@ Arguments:
 
 Options:
     --allow-other               When true, tracts with the name 'other' will
-                                not be filtered from results
+                                be included in the results
 """
 
 import os
@@ -46,14 +46,14 @@ def generate_masks(base_image, tracts_file, output_loc, allow_other=False):
     shape = base_nifti.shape
     affine = base_nifti.affine
 
-    for tract in tracts.keys():
+    for tract in tracts:
         if 'other' in tract.lower() and not allow_other:
             continue
-        mask = create_mask_array(tract, tracts[tract], shape, affine)
+        mask = create_mask_array(tracts[tract], shape, affine)
         mask_nii = nib.Nifti1Image(mask, affine)
         save_mask(output_loc, tract, mask_nii)
 
-def create_mask_array(tract, tract_ends, mask_shape, affine):
+def create_mask_array(tract_ends, mask_shape, affine):
     mask_array = np.zeros((mask_shape[0], mask_shape[1], mask_shape[2], 1))
 
     start_voxels = mm_to_voxels(tract_ends['starts'], affine)

@@ -2,7 +2,7 @@
 A set of scripts and functions for producing masks from a JSON file of tract end points (which can be parsed from a MRML file).
 
 ## Requirements
-	1. @edickie's ciftify module
+	1. @edickie's ciftify module: https://github.com/edickie/ciftify
 	2. Connectome work bench
 	3. FSL
 	4. The following python modules: docopt, nibabel, numpy
@@ -12,7 +12,7 @@ A set of scripts and functions for producing masks from a JSON file of tract end
 
 ### tracts_cifti_mask.py:
 	Can generate a cifti file of masks for each tract in the JSON file. This file is just a
-	composition of the code in the other classes/util script.
+	composition of the code in the other scripts.
 		1. Uses tract_end_masks to make nifti masks for all end points for the tracts
 		2. Smoothes the nifti masks by some given value
 		3. Moves the smoothed nifti masks into MNI space
